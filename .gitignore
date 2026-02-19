@@ -1,0 +1,16 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos temporários de editores
+*.swp
+*.swo
+*.tmp
+.vscode/
+
+# Logs e saídas
+*.log
+*.out
+
+# Arquivos compilados do SWI-Prolog
+*.qlf
