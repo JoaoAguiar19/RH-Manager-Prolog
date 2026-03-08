@@ -1,3 +1,5 @@
+:- consult('funcionarios.pl').
+
 % Segue o formato licenca(tipo_da_licenca, duracao_em_dias).
 
 licenca(maternidade, 120).
