@@ -8,13 +8,18 @@ licenca(luto, 2).
 licenca(doacao_sangue, 1).
 licenca(_, 0).
 
-
-% testa a atribuição de licença a um funcionário
-licenca_funcionario(Cpf, Tipo, Duracao) :-
+% atribuição de licença a um funcionário
+:- dynamic licenca_registrada/3.
+registrar_licenca(Cpf, Tipo, Duracao) :-
     cpf_valido(Cpf),
     funcionario(Cpf, _, Status),
     Status \= desligado,
-    licenca(Tipo, Duracao).
+    verifica_licenca(Tipo, Duracao),
+    assertz(licenca_registrada(Cpf, Tipo, Duracao)).
+
+licenca_registrada("11111111111", paternidade, 4).
+licenca_registrada("11111111111", casamento, 2).
+
 
 
 verifica_licenca(Tipo, Duracao) :-
@@ -22,3 +27,42 @@ verifica_licenca(Tipo, Duracao) :-
     Duracao > 0,
     licenca(Tipo, Max),
     Duracao =< Max.
+
+licencas_do_funcionario(Cpf, Lista) :-
+    findall(
+        licenca_registrada(Cpf,Tipo,Dias),
+        licenca_registrada(Cpf,Tipo,Dias),
+        Lista
+    ).
+
+
+
+
+
+
+
+
+
+
+
+% Queries de exemplo:
+%
+% licencas_do_funcionario("11111111111", L).
+%
+% registrar_licenca("11111111111", casamento, 3),
+% licencas_do_funcionario("11111111111", L).
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
