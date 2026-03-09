@@ -22,7 +22,7 @@ excessivo e facilitando manutenção e evolução.
   - Modelagem declarativa das entidades do sistema
 - **tests/**
   - Testes automatizados
-- **main.pro**
+- **main.pl**
   - Ponto de entrada do sistema
   - Responsável por carregar os módulos
 
@@ -87,4 +87,5 @@ O `main.pro` apenas inicializa e organiza o carregamento dos módulos.
 ## Execução
 
 Clone o repositório: https://github.com/JoaoAguiar19/RH-Manager-Prolog
+
 
