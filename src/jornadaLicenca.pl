@@ -48,15 +48,72 @@ total_dias_licenca(Cpf, Total) :-
     ),
     soma_dias_licenca(ListaDias, Total).
 
-% método auxiliar que soma recursivamente a quantidade de dias de licença de um funcionário
 soma_dias_licenca([], 0).
 soma_dias_licenca([H|T], R) :-
     soma_dias_licenca(T, R1),
     R is H + R1.
 
 
+% Jornadas
+
+:- dynamic jornada/4.
+
+jornada("11111111111", "2026-03-10", 8, 17).
+jornada("11111111111", "2026-03-11", 8, 16).
+jornada("22222222222", "2026-03-11", 9, 18).
 
 
+registrar_jornada(Cpf, Data, Entrada, Saida) :-
+    cpf_valido(Cpf),
+    funcionario(Cpf, _, Status),
+    Status \= desligado,
+    Saida > Entrada,
+    assertz(jornada(Cpf, Data, Entrada, Saida)).
+
+horas_trabalhadas(Cpf, Data, Horas) :-
+    jornada(Cpf, Data, Entrada, Saida),
+    Horas is Saida - Entrada.
+
+jornadas_do_funcionario(Cpf, Lista) :-
+    findall(
+        jornada(Cpf, Data, Entrada, Saida),
+        jornada(Cpf, Data, Entrada, Saida),
+        Lista
+    ).
+
+total_horas_trabalhadas(Cpf, Total) :-
+    findall(
+        Horas,
+        (
+            jornada(Cpf, _, Entrada, Saida),
+            Horas is Saida - Entrada
+        ),
+        ListaHoras
+    ),
+    soma_horas(ListaHoras, Total).
+
+soma_horas([], 0).
+soma_horas([H|T], R) :-
+    soma_horas(T, R1),
+    R is H + R1.
+
+jornada_valida(Cpf, Data) :-
+    jornada(Cpf, Data, Entrada, Saida),
+    Horas is Saida - Entrada,
+    Horas =< 8.
+
+
+% R unifica com valida ou invalida
+verifica_jornada(Cpf, Data, R) :-
+    jornada(Cpf, Data, Entrada, Saida),
+    Horas is Saida - Entrada,
+    classifica_jornada(Horas, R).
+
+classifica_jornada(Horas, valida) :-
+    Horas =< 8.
+
+classifica_jornada(Horas, invalida) :-
+    Horas > 8.
 
 
 
@@ -70,9 +127,11 @@ soma_dias_licenca([H|T], R) :-
 %
 % total_dias_licenca("11111111111", X).
 %
+% jornada_valida("11111111111","2026-03-10").
 %
+% verifica_jornada("11111111111","2026-03-10", R).
 %
-%
+% total_horas_trabalhadas("11111111111", T).
 %
 %
 %

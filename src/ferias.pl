@@ -1,41 +1,47 @@
 :- consult('funcionarios.pl').
 
-:- dynamic ferias_funcionario/3.
+ferias("11111111111",data(1,2,2023),data(15,2,2023),15).
+ferias("11111111111",data(10,7,2023),data(20,7,2023),10).
+ferias("22222222222",data(5,1,2023),data(15,1,2023),10).
+ferias("22222222222",data(1,8,2023),data(10,8,2023),10).
+
+:- dynamic ferias/4.
 
 % estruturas:
-% ferias_funcionario(Cpf,Saldo,ListaFerias)
-% ferias(Inicio,Fim,Dias)
+% ferias(Cpf,Inicio,Fim,Dias)
 % data(Dia,Mes,Ano)
 
 registrar_ferias(Cpf,Inicio,Fim,Dias) :-
-    ferias_funcionario(Cpf,Saldo,Lista),
+    cpf_valido(Cpf),
+    funcionario(Cpf, _, Status),
+    Status \= desligado,
+    saldo_ferias(Cpf,Saldo),
     Dias =< Saldo,
-    NovaFerias = ferias(Inicio,Fim,Dias),
-    NovoSaldo is Saldo - Dias,
-    append(Lista,[NovaFerias],NovaLista),
-    retract(ferias_funcionario(Cpf,Saldo,Lista)),
-    assertz(
-        ferias_funcionario(Cpf,NovoSaldo,NovaLista)
-    ).
-
-registrar_ferias(Cpf,Inicio,Fim,Dias) :-
-    \+ ferias_funcionario(Cpf,_,_),
-    Dias =< 30,
-    NovaFerias = ferias(Inicio,Fim,Dias),
-    SaldoRestante is 30 - Dias,
-    assertz(
-        ferias_funcionario(Cpf,SaldoRestante,[NovaFerias])
-    ).
+    assertz(ferias(Cpf,Inicio,Fim,Dias)).
 
 saldo_ferias(Cpf,Saldo) :-
-    ferias_funcionario(Cpf,Saldo,_).
+    findall(
+        Dias,
+        ferias(Cpf,_,_,Dias),
+        ListaDias
+    ),
+    soma_lista(ListaDias,TotalUsado),
+    Saldo is 30 - TotalUsado.
+
 
 listar_ferias(Cpf,Lista) :-
-    ferias_funcionario(Cpf,_,Lista).
+    findall(
+        ferias(Inicio,Fim,Dias),
+        ferias(Cpf,Inicio,Fim,Dias),
+        Lista
+    ).
 
+soma_lista([],0).
+soma_lista([H|T],R) :-
+    soma_lista(T,R1),
+    R is H + R1.
 
 % Exemplos de uso:
 % registrar_ferias("11111111111",data(1,2,2023),data(15,2,2023),15).
 % saldo_ferias("11111111111",X).
-% listar ferias
 % listar_ferias("11111111111",L).
